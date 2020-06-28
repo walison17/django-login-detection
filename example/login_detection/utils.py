@@ -21,7 +21,7 @@ def get_user_agent(request) -> str:
     return request.META["HTTP_USER_AGENT"]
 
 
-def get_location_from_ip_adress(ip_address: str) -> Location:
+def get_location_from_ip_address(ip_address: str) -> Location:
     return default_locator.locate(ip_address)
 
 
@@ -29,13 +29,12 @@ def detect_new_login_location(user, location: Location) -> bool:
     is_first_login = not Login.objects.filter(user=user).exists()
 
     if is_first_login:  # should report first login?
-        return
+        return False
 
     last_valid_login = Login.objects.filter(user=user, reported=False).first()
 
-    if last_valid_login.location != location:
-        notify_user(user, location)
+    return last_valid_login.location != location
 
 
-def notify_user(user: User, location: Location) -> None:
-    print("reporting login...")
+def notify_user(user: User, location: Location, ip_address: str) -> None:
+    pass

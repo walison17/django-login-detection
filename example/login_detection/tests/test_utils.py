@@ -1,16 +1,7 @@
 import pytest
 
-from django.contrib.auth import get_user_model
-
 from ..locators import Location
 from ..utils import get_client_ip_address, detect_new_login_location
-
-User = get_user_model()
-
-
-@pytest.fixture
-def user():
-    return User.objects.create_user(username="walison")
 
 
 @pytest.fixture
@@ -47,25 +38,19 @@ def test_get_client_ip_address_with_reverse_proxy(rf):
 
 
 @pytest.mark.django_db
-def test_detect_new_login_location_first_login(user, location, mocker):
-    mocked_notify_user = mocker.patch("example.login_detection.utils.notify_user")
-
-    mocked_notify_user.assert_not_called()
+def test_detect_new_login_location_first_login(user, location):
+    assert not detect_new_login_location(user, location)
 
 
 @pytest.mark.django_db
 @pytest.mark.parametrize(
-    "login_location,called",
+    "login_location,expected",
     [
         (Location("caruaru", "pernambuco", "brazil"), False),
         (Location("são paulo", "são paulo", "brazil"), True),
     ],
 )
 def test_detect_new_login(
-    user_with_stored_login, mocker, store_login, login_location, called
+    user_with_stored_login, store_login, login_location, expected
 ):
-    mocked_notify_user = mocker.patch("example.login_detection.utils.notify_user")
-
-    detect_new_login_location(user_with_stored_login, login_location)
-
-    assert mocked_notify_user.called is called
+    assert detect_new_login_location(user_with_stored_login, login_location) is expected
