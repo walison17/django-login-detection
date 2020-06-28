@@ -20,11 +20,6 @@ def user_with_stored_login(user, store_login, location):
 
 
 @pytest.fixture
-def ip_address():
-    return "158.243.15.73"
-
-
-@pytest.fixture
 def store_login(ip_address):
     def _store_login(user, location):
         user.logins.create(
@@ -35,11 +30,6 @@ def store_login(ip_address):
         )
 
     return _store_login
-
-
-@pytest.fixture
-def location():
-    return Location("caruaru", "pernambuco", "brazil")
 
 
 def test_get_client_ip_address(rf, ip_address):
