@@ -10,6 +10,9 @@ class Location:
         self.region = region
         self.country = country
 
+    def __repr__(self):
+        return f"<Location: city={self.city} region={self.region} country={self.country}>"
+
     def __eq__(self, other):
         return all(
             [
